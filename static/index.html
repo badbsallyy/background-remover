@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Remover - AI-Powered Image Background Removal</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Background Remover</h1>
+            <p class="subtitle">AI-powered background removal in seconds</p>
+        </header>
+
+        <main>
+            <!-- Upload Section -->
+            <section class="upload-section" id="uploadSection">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📤</div>
+                    <h2>Drop your image here</h2>
+                    <p>or click to browse</p>
+                    <input type="file" id="fileInput" accept="image/*" hidden>
+                    <button class="btn-primary" onclick="document.getElementById('fileInput').click()">
+                        Choose Image
+                    </button>
+                    <p class="upload-hint">Supports: PNG, JPG, JPEG</p>
+                </div>
+            </section>
+
+            <!-- Processing Section -->
+            <section class="processing-section" id="processingSection" style="display: none;">
+                <div class="loader"></div>
+                <p>Removing background...</p>
+            </section>
+
+            <!-- Result Section -->
+            <section class="result-section" id="resultSection" style="display: none;">
+                <div class="comparison">
+                    <div class="image-container">
+                        <h3>Original</h3>
+                        <img id="originalImage" alt="Original image">
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="image-container">
+                        <h3>Result</h3>
+                        <div class="checkerboard">
+                            <img id="resultImage" alt="Result image">
+                        </div>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="btn-primary" id="downloadBtn">
+                        💾 Download
+                    </button>
+                    <button class="btn-secondary" id="newImageBtn">
+                        🔄 Try Another Image
+                    </button>
+                </div>
+            </section>
+
+            <!-- Error Section -->
+            <section class="error-section" id="errorSection" style="display: none;">
+                <div class="error-message">
+                    <span class="error-icon">⚠️</span>
+                    <p id="errorMessage"></p>
+                    <button class="btn-secondary" onclick="resetUpload()">
+                        Try Again
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="api-info">
+                <h3>🔌 API Available</h3>
+                <p>Integrate background removal into your app</p>
+                <code>POST /api/remove-background</code>
+                <a href="/docs" target="_blank" class="btn-link">View API Docs</a>
+            </div>
+            <div class="footer-text">
+                <p>Powered by AI • Fast & Free • No Registration Required</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
