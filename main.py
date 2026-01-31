@@ -82,12 +82,18 @@ async def remove_background(file: UploadFile = File(...)):
         output_image.save(output_buffer, format="PNG")
         output_buffer.seek(0)
         
+        # Generate output filename
+        if file.filename and '.' in file.filename:
+            base_name = file.filename.rsplit('.', 1)[0]
+        else:
+            base_name = file.filename or "image"
+        
         # Return the processed image
         return StreamingResponse(
             output_buffer,
             media_type="image/png",
             headers={
-                "Content-Disposition": f"attachment; filename=no-bg-{file.filename.rsplit('.', 1)[0]}.png"
+                "Content-Disposition": f"attachment; filename=no-bg-{base_name}.png"
             }
         )
         

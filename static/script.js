@@ -9,10 +9,12 @@ const originalImage = document.getElementById('originalImage');
 const resultImage = document.getElementById('resultImage');
 const downloadBtn = document.getElementById('downloadBtn');
 const newImageBtn = document.getElementById('newImageBtn');
+const tryAgainBtn = document.getElementById('tryAgainBtn');
 const errorMessage = document.getElementById('errorMessage');
 
 let processedImageBlob = null;
 let originalFileName = '';
+let currentImageUrl = null;
 
 // Drag and drop handlers
 uploadArea.addEventListener('dragover', (e) => {
@@ -88,9 +90,14 @@ async function handleFile(file) {
         
         // Get the processed image
         processedImageBlob = await response.blob();
-        const imageUrl = URL.createObjectURL(processedImageBlob);
         
-        resultImage.src = imageUrl;
+        // Revoke previous URL if exists to prevent memory leak
+        if (currentImageUrl) {
+            URL.revokeObjectURL(currentImageUrl);
+        }
+        
+        currentImageUrl = URL.createObjectURL(processedImageBlob);
+        resultImage.src = currentImageUrl;
         
         // Show result
         showSection(resultSection);
@@ -120,6 +127,11 @@ newImageBtn.addEventListener('click', () => {
     resetUpload();
 });
 
+// Try again button
+tryAgainBtn.addEventListener('click', () => {
+    resetUpload();
+});
+
 // Show specific section
 function showSection(section) {
     uploadSection.style.display = 'none';
@@ -141,6 +153,13 @@ function resetUpload() {
     fileInput.value = '';
     processedImageBlob = null;
     originalFileName = '';
+    
+    // Revoke object URL to free memory
+    if (currentImageUrl) {
+        URL.revokeObjectURL(currentImageUrl);
+        currentImageUrl = null;
+    }
+    
     showSection(uploadSection);
 }
 
