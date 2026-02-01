@@ -2,15 +2,24 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from rembg import remove
 from PIL import Image
 import io
 import os
+import httpx
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Get API key from environment
+CLIPDROP_API_KEY = os.getenv("CLIPDROP_API_KEY")
+if not CLIPDROP_API_KEY:
+    print("WARNING: CLIPDROP_API_KEY not set. Background removal will fail.")
 
 app = FastAPI(
     title="Background Remover API",
-    description="A simple and effective API for removing backgrounds from images",
-    version="1.0.0"
+    description="A simple and effective API for removing backgrounds from images using Clipdrop API",
+    version="2.0.0"
 )
 
 # Configure CORS
@@ -54,7 +63,7 @@ async def health_check():
 @app.post("/api/remove-background")
 async def remove_background(file: UploadFile = File(...)):
     """
-    Remove background from an uploaded image
+    Remove background from an uploaded image using Clipdrop API
     
     Args:
         file: Image file (PNG, JPG, JPEG)
@@ -62,6 +71,13 @@ async def remove_background(file: UploadFile = File(...)):
     Returns:
         PNG image with transparent background
     """
+    # Check if API key is configured
+    if not CLIPDROP_API_KEY:
+        raise HTTPException(
+            status_code=500,
+            detail="API key not configured. Please set CLIPDROP_API_KEY environment variable."
+        )
+    
     # Validate file type
     if not file.content_type.startswith("image/"):
         raise HTTPException(
@@ -72,15 +88,36 @@ async def remove_background(file: UploadFile = File(...)):
     try:
         # Read the uploaded image
         contents = await file.read()
-        input_image = Image.open(io.BytesIO(contents))
         
-        # Remove background
-        output_image = remove(input_image)
-        
-        # Convert to bytes
-        output_buffer = io.BytesIO()
-        output_image.save(output_buffer, format="PNG")
-        output_buffer.seek(0)
+        # Call Clipdrop API for background removal
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                "https://clipdrop-api.co/remove-background/v1",
+                files={
+                    "image_file": (file.filename, contents, file.content_type)
+                },
+                headers={
+                    "x-api-key": CLIPDROP_API_KEY
+                }
+            )
+            
+            if response.status_code != 200:
+                error_detail = response.text
+                if response.status_code == 401:
+                    error_detail = "Invalid API key. Please check your CLIPDROP_API_KEY."
+                elif response.status_code == 402:
+                    error_detail = "API quota exceeded. Please upgrade your Clipdrop plan."
+                elif response.status_code == 400:
+                    error_detail = "Invalid image format or size."
+                
+                raise HTTPException(
+                    status_code=response.status_code,
+                    detail=f"Clipdrop API error: {error_detail}"
+                )
+            
+            # Get the processed image
+            output_buffer = io.BytesIO(response.content)
+            output_buffer.seek(0)
         
         # Generate output filename
         if file.filename and '.' in file.filename:
@@ -97,10 +134,24 @@ async def remove_background(file: UploadFile = File(...)):
             }
         )
         
+    except httpx.TimeoutException:
+        raise HTTPException(
+            status_code=504,
+            detail="Request timeout. The image might be too large or the service is slow."
+        )
+    except httpx.RequestError as e:
+        # Log the error for debugging
+        print(f"Failed to connect to Clipdrop API: {str(e)}")
+        raise HTTPException(
+            status_code=503,
+            detail="Failed to connect to the image processing service. Please try again later."
+        )
     except Exception as e:
+        # Log the error for debugging
+        print(f"Error processing image: {str(e)}")
         raise HTTPException(
             status_code=500,
-            detail=f"Error processing image: {str(e)}"
+            detail="Error processing image. Please try again or contact support."
         )
 
 

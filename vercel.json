@@ -5,7 +5,7 @@
       "src": "main.py",
       "use": "@vercel/python",
       "config": {
-        "maxLambdaSize": "50mb"
+        "maxLambdaSize": "15mb"
       }
     }
   ],
@@ -14,5 +14,8 @@
       "src": "/(.*)",
       "dest": "main.py"
     }
-  ]
+  ],
+  "env": {
+    "CLIPDROP_API_KEY": "@clipdrop_api_key"
+  }
 }
