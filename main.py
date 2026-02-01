@@ -12,13 +12,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Get API key from environment
-CLIPDROP_API_KEY = os.getenv("CLIPDROP_API_KEY")
-if not CLIPDROP_API_KEY:
-    print("WARNING: CLIPDROP_API_KEY not set. Background removal will fail.")
+POLLINATION_API_KEY = os.getenv("POLLINATION_API_KEY")
+if not POLLINATION_API_KEY:
+    print("WARNING: POLLINATION_API_KEY not set. Background removal will fail.")
 
 app = FastAPI(
     title="Background Remover API",
-    description="A simple and effective API for removing backgrounds from images using Clipdrop API",
+    description="A simple and effective API for removing backgrounds from images using Pollinations AI",
     version="2.0.0"
 )
 
@@ -63,7 +63,7 @@ async def health_check():
 @app.post("/api/remove-background")
 async def remove_background(file: UploadFile = File(...)):
     """
-    Remove background from an uploaded image using Clipdrop API
+    Remove background from an uploaded image using Pollinations AI
     
     Args:
         file: Image file (PNG, JPG, JPEG)
@@ -72,10 +72,10 @@ async def remove_background(file: UploadFile = File(...)):
         PNG image with transparent background
     """
     # Check if API key is configured
-    if not CLIPDROP_API_KEY:
+    if not POLLINATION_API_KEY:
         raise HTTPException(
             status_code=500,
-            detail="API key not configured. Please set CLIPDROP_API_KEY environment variable."
+            detail="API key not configured. Please set POLLINATION_API_KEY environment variable."
         )
     
     # Validate file type
@@ -89,34 +89,91 @@ async def remove_background(file: UploadFile = File(...)):
         # Read the uploaded image
         contents = await file.read()
         
-        # Call Clipdrop API for background removal
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        # Prepare the image for Pollinations AI
+        # First, convert image to base64 for sending
+        import base64
+        image_base64 = base64.b64encode(contents).decode('utf-8')
+        
+        # Call Pollinations AI API for background removal using kontext model
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            # Use the chat completions endpoint with image input
             response = await client.post(
-                "https://clipdrop-api.co/remove-background/v1",
-                files={
-                    "image_file": (file.filename, contents, file.content_type)
+                "https://gen.pollinations.ai/v1/chat/completions",
+                json={
+                    "model": "kontext",
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "Remove the background from this image and make it transparent. Keep only the main subject isolated on a transparent background."
+                                },
+                                {
+                                    "type": "image_url",
+                                    "image_url": {
+                                        "url": f"data:{file.content_type};base64,{image_base64}"
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    "response_format": "url"
                 },
                 headers={
-                    "x-api-key": CLIPDROP_API_KEY
+                    "Authorization": f"Bearer {POLLINATION_API_KEY}",
+                    "Content-Type": "application/json"
                 }
             )
             
             if response.status_code != 200:
                 error_detail = response.text
                 if response.status_code == 401:
-                    error_detail = "Invalid API key. Please check your CLIPDROP_API_KEY."
+                    error_detail = "Invalid API key. Please check your POLLINATION_API_KEY."
                 elif response.status_code == 402:
-                    error_detail = "API quota exceeded. Please upgrade your Clipdrop plan."
+                    error_detail = "API quota exceeded. Please check your Pollinations AI balance."
                 elif response.status_code == 400:
                     error_detail = "Invalid image format or size."
                 
                 raise HTTPException(
                     status_code=response.status_code,
-                    detail=f"Clipdrop API error: {error_detail}"
+                    detail=f"Pollinations AI API error: {error_detail}"
+                )
+            
+            # Parse the response to get the image URL
+            result = response.json()
+            image_url = None
+            
+            # Extract image URL from response
+            if "choices" in result and len(result["choices"]) > 0:
+                choice = result["choices"][0]
+                if "message" in choice and "content" in choice["message"]:
+                    content = choice["message"]["content"]
+                    # Check if content is a URL or has content_blocks
+                    if isinstance(content, str) and content.startswith("http"):
+                        image_url = content
+                    elif "content_blocks" in choice["message"]:
+                        for block in choice["message"]["content_blocks"]:
+                            if block.get("type") == "image_url":
+                                image_url = block.get("image_url", {}).get("url")
+                                break
+            
+            if not image_url:
+                raise HTTPException(
+                    status_code=500,
+                    detail="Failed to get processed image URL from Pollinations AI response"
+                )
+            
+            # Download the processed image
+            image_response = await client.get(image_url)
+            if image_response.status_code != 200:
+                raise HTTPException(
+                    status_code=500,
+                    detail="Failed to download processed image"
                 )
             
             # Get the processed image
-            output_buffer = io.BytesIO(response.content)
+            output_buffer = io.BytesIO(image_response.content)
             output_buffer.seek(0)
         
         # Generate output filename
@@ -141,7 +198,7 @@ async def remove_background(file: UploadFile = File(...)):
         )
     except httpx.RequestError as e:
         # Log the error for debugging
-        print(f"Failed to connect to Clipdrop API: {str(e)}")
+        print(f"Failed to connect to Pollinations AI API: {str(e)}")
         raise HTTPException(
             status_code=503,
             detail="Failed to connect to the image processing service. Please try again later."

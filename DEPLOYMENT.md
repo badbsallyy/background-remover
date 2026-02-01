@@ -4,7 +4,7 @@ This guide provides step-by-step instructions for deploying the Background Remov
 
 ## Prerequisites
 
-- Clipdrop API key (get it from https://clipdrop.co/apis)
+- Pollinations AI API key (get it from https://enter.pollinations.ai)
 - Python 3.9+ (for local deployment)
 - Internet connection for API calls
 
@@ -26,7 +26,7 @@ pip install -r requirements.txt
 3. Set up environment variables:
 ```bash
 cp .env.example .env
-# Edit .env and add your CLIPDROP_API_KEY
+# Edit .env and add your POLLINATION_API_KEY
 ```
 
 4. Run the application:
@@ -45,7 +45,7 @@ docker build -t background-remover .
 
 2. Run the container with your API key:
 ```bash
-docker run -d -p 8000:8000 -e CLIPDROP_API_KEY=your_api_key --name bg-remover background-remover
+docker run -d -p 8000:8000 -e POLLINATION_API_KEY=your_api_key --name bg-remover background-remover
 ```
 
 3. Access the application at `http://localhost:8000`
@@ -59,7 +59,7 @@ Vercel provides the fastest and easiest serverless deployment for this applicati
 1. **Prerequisites:**
    - GitHub account
    - Vercel account (free) at [vercel.com](https://vercel.com)
-   - Clipdrop API key from [clipdrop.co/apis](https://clipdrop.co/apis)
+   - Pollinations AI API key from [enter.pollinations.ai](https://enter.pollinations.ai)
 
 2. **Fork and import:**
    - Fork this repository to your GitHub account
@@ -69,7 +69,7 @@ Vercel provides the fastest and easiest serverless deployment for this applicati
 
 3. **Configure environment variables:**
    - In the import screen, expand "Environment Variables"
-   - Add: `CLIPDROP_API_KEY` = `your_actual_api_key`
+   - Add: `POLLINATION_API_KEY` = `your_actual_api_key`
    - Make sure to add it for Production, Preview, and Development environments
 
 4. **Deploy:**
@@ -80,7 +80,7 @@ Vercel provides the fastest and easiest serverless deployment for this applicati
 5. **Update environment variables later (if needed):**
    - Go to your project in Vercel Dashboard
    - Settings → Environment Variables
-   - Add/Edit `CLIPDROP_API_KEY`
+   - Add/Edit `POLLINATION_API_KEY`
    - Redeploy from Deployments tab
 
 **Vercel Deployment Features:**
@@ -109,8 +109,8 @@ Vercel provides the fastest and easiest serverless deployment for this applicati
    - **Plan**: Free (or higher for production)
 
 6. Add environment variable:
-   - Key: `CLIPDROP_API_KEY`
-   - Value: Your Clipdrop API key
+   - Key: `POLLINATION_API_KEY`
+   - Value: Your Pollinations AI API key
 
 7. Click "Create Web Service"
 
@@ -131,8 +131,8 @@ Vercel provides the fastest and easiest serverless deployment for this applicati
 4. Choose this repository
 
 5. Add environment variable:
-   - Key: `CLIPDROP_API_KEY`
-   - Value: Your Clipdrop API key
+   - Key: `POLLINATION_API_KEY`
+   - Value: Your Pollinations AI API key
 
 6. Railway will automatically:
    - Detect the Dockerfile
@@ -212,29 +212,29 @@ eb open
 
 The application requires the following environment variable:
 
-- `CLIPDROP_API_KEY`: Your Clipdrop API key (required)
+- `POLLINATION_API_KEY`: Your Pollinations AI API key (required)
 - `PORT`: Port number for the application (default: 8000, optional)
 
 ### Setting Environment Variables
 
 **Vercel:**
-- Project Settings → Environment Variables → Add `CLIPDROP_API_KEY`
+- Project Settings → Environment Variables → Add `POLLINATION_API_KEY`
 
 **Render:**
-- Environment tab → Add `CLIPDROP_API_KEY`
+- Environment tab → Add `POLLINATION_API_KEY`
 
 **Railway:**
-- Variables tab → Add `CLIPDROP_API_KEY`
+- Variables tab → Add `POLLINATION_API_KEY`
 
 **Docker:**
 ```bash
-docker run -d -p 80:80 -e PORT=80 -e CLIPDROP_API_KEY=your_key background-remover
+docker run -d -p 80:80 -e PORT=80 -e POLLINATION_API_KEY=your_key background-remover
 ```
 
 **Local Development:**
 ```bash
 cp .env.example .env
-# Edit .env and add your CLIPDROP_API_KEY
+# Edit .env and add your POLLINATION_API_KEY
 ```
 
 ## Health Check
@@ -250,8 +250,8 @@ All deployments should configure health checks:
 For production deployments:
 
 1. **Memory**: Minimal memory required (serverless functions use ~128MB)
-2. **Timeout**: Set request timeout to at least 30 seconds for large images
-3. **API Limits**: Monitor your Clipdrop API usage and upgrade plan if needed
+2. **Timeout**: Set request timeout to at least 60 seconds for large images and AI processing
+3. **API Limits**: Monitor your Pollinations AI usage and pollen balance
 4. **Rate Limiting**: Consider implementing rate limiting for public endpoints
 
 ## Monitoring
@@ -260,26 +260,26 @@ Monitor these metrics:
 
 - Response time for `/api/remove-background`
 - API call success/error rate
-- Clipdrop API usage and quota
+- Pollinations AI usage and pollen balance
 - Health check status
 
 ## Troubleshooting
 
 ### Application won't start
-- Check that `CLIPDROP_API_KEY` is set correctly
-- Verify API key is valid at clipdrop.co
+- Check that `POLLINATION_API_KEY` is set correctly
+- Verify API key is valid at enter.pollinations.ai
 - Check application logs for error messages
 
 ### Background removal fails
 - Verify API key is valid
-- Check API quota hasn't been exceeded
+- Check pollen balance hasn't been exceeded
 - Ensure image format is supported (PNG, JPG, JPEG)
-- Check image size (some APIs have limits)
+- Check image size (large images may take longer to process)
 
 ### API rate limiting
-- Check your Clipdrop plan limits
+- Check your Pollinations AI pollen balance
 - Implement client-side rate limiting
-- Consider upgrading your Clipdrop plan
+- Consider upgrading your Pollinations AI tier
 
 ## Security
 
