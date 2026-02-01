@@ -5,15 +5,15 @@
 ### Date: 2026-02-01
 
 ### Summary
-The application has been refactored to use the Clipdrop API for background removal, eliminating the need for heavy local AI model dependencies. This significantly reduces the attack surface and improves security.
+The application has been refactored to use the Pollinations AI API for background removal, eliminating the need for heavy local AI model dependencies. This significantly reduces the attack surface and improves security.
 
 ---
 
 ## Architecture Changes
 
-### Migration from rembg to Clipdrop API
+### Migration from rembg to Pollinations AI API
 - **Old**: Local AI model processing using rembg and U2-Net
-- **New**: Cloud-based API processing using Clipdrop
+- **New**: Cloud-based API processing using Pollinations AI
 - **Security Benefits**:
   - Smaller application footprint
   - Fewer dependencies to maintain
@@ -83,7 +83,7 @@ app.add_middleware(
 ## Environment Variables
 
 ### Required
-- `CLIPDROP_API_KEY`: API key for Clipdrop service (required)
+- `POLLINATION_API_KEY`: API key for Pollinations AI service (required)
 
 ### Optional
 - `PORT`: Application port (default: 8000)
@@ -102,7 +102,7 @@ app.add_middleware(
 - ✅ Rate limiting available
 
 ### Environment Variable Security
-- Store `CLIPDROP_API_KEY` in Vercel project settings
+- Store `POLLINATION_API_KEY` in Vercel project settings
 - Use separate keys for development/production
 - Rotate keys regularly
 - Never log or expose API keys
@@ -137,9 +137,9 @@ Implement rate limiting to prevent abuse:
 - Or implement application-level rate limiting
 
 ### 3. API Key Rotation
-- Rotate Clipdrop API key periodically
-- Monitor API usage for anomalies
-- Set up alerts for quota limits
+- Rotate Pollinations AI API key periodically
+- Monitor API usage and pollen balance for anomalies
+- Set up alerts for pollen balance limits
 
 ### 4. Monitoring
 Monitor these metrics:
@@ -177,9 +177,10 @@ headers["Content-Security-Policy"] = "default-src 'self'"
 
 ## Known Limitations
 
-1. **API Key Security**: The security of the application depends on keeping the Clipdrop API key secure
-2. **Rate Limiting**: Application currently relies on Clipdrop's rate limiting
+1. **API Key Security**: The security of the application depends on keeping the Pollinations AI API key secure
+2. **Rate Limiting**: Application currently relies on Pollinations AI's rate limiting
 3. **File Size**: Large files may timeout - consider implementing chunking for very large images
+4. **Processing Time**: AI-based background removal may take longer (up to 60 seconds for complex images)
 
 ---
 
@@ -195,7 +196,7 @@ If you discover a security vulnerability, please:
 
 ## Conclusion
 
-The application has been refactored with security in mind. By using the Clipdrop API instead of local model processing, we have:
+The application has been refactored with security in mind. By using the Pollinations AI API instead of local model processing, we have:
 - Reduced the dependency footprint
 - Eliminated local model storage vulnerabilities
 - Simplified the security model
@@ -203,5 +204,5 @@ The application has been refactored with security in mind. By using the Clipdrop
 
 **Last Updated**: 2026-02-01  
 **Security Status**: ✅ SECURE  
-**Architecture**: API-based (Clipdrop)  
+**Architecture**: API-based (Pollinations AI)  
 **Deployment**: Vercel-ready

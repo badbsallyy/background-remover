@@ -4,11 +4,11 @@ Get the Background Remover running in under 5 minutes!
 
 ## Prerequisites
 
-**Get a Clipdrop API Key (Free)**
-1. Visit [https://clipdrop.co/apis](https://clipdrop.co/apis)
+**Get a Pollinations AI API Key (Free)**
+1. Visit [https://enter.pollinations.ai](https://enter.pollinations.ai)
 2. Sign up for a free account
 3. Copy your API key
-4. Free tier: 100 API calls/month
+4. Free tier: Daily pollen grants available
 
 ## Option 1: Local Python (Recommended for Development)
 
@@ -22,7 +22,7 @@ pip install -r requirements.txt
 
 # Set up environment variables
 cp .env.example .env
-# Edit .env and add: CLIPDROP_API_KEY=your_actual_api_key
+# Edit .env and add: POLLINATION_API_KEY=your_actual_api_key
 
 # Run
 python main.py
@@ -39,7 +39,7 @@ cd background-remover
 docker build -t background-remover .
 
 # Run with your API key
-docker run -p 8000:8000 -e CLIPDROP_API_KEY=your_api_key background-remover
+docker run -p 8000:8000 -e POLLINATION_API_KEY=your_api_key background-remover
 
 # Open browser to http://localhost:8000
 ```
@@ -55,8 +55,8 @@ docker run -p 8000:8000 -e CLIPDROP_API_KEY=your_api_key background-remover
 3. Click "Add New Project"
 4. Import your forked repository
 5. Add environment variable:
-   - Name: `CLIPDROP_API_KEY`
-   - Value: Your Clipdrop API key
+   - Name: `POLLINATION_API_KEY`
+   - Value: Your Pollinations AI API key
 6. Click "Deploy"
 7. Done! Your app is live at `https://your-project.vercel.app`
 
@@ -67,7 +67,7 @@ docker run -p 8000:8000 -e CLIPDROP_API_KEY=your_api_key background-remover
 1. Click button above
 2. Connect your GitHub account
 3. Select this repository
-4. Add environment variable `CLIPDROP_API_KEY`
+4. Add environment variable `POLLINATION_API_KEY`
 5. Click "Deploy"
 
 ## Option 5: Deploy to Railway
@@ -76,7 +76,7 @@ docker run -p 8000:8000 -e CLIPDROP_API_KEY=your_api_key background-remover
 
 1. Click button above
 2. Connect repository
-3. Add environment variable `CLIPDROP_API_KEY`
+3. Add environment variable `POLLINATION_API_KEY`
 4. Deploy automatically
 
 ## Test the API

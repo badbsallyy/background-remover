@@ -16,6 +16,6 @@
     }
   ],
   "env": {
-    "CLIPDROP_API_KEY": "@clipdrop_api_key"
+    "POLLINATION_API_KEY": "@pollination_api_key"
   }
 }
