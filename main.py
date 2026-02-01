@@ -145,11 +145,11 @@ async def remove_background(file: UploadFile = File(...)):
             detail=f"Failed to connect to Clipdrop API: {str(e)}"
         )
     except Exception as e:
-        # Don't expose internal errors to the user
+        # Log the error for debugging
         print(f"Error processing image: {str(e)}")
         raise HTTPException(
             status_code=500,
-            detail=f"Error processing image: {str(e)}"
+            detail="Error processing image. Please try again or contact support."
         )
 
 
