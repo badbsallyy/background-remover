@@ -1,45 +1,63 @@
 # 🎨 Background Remover
 
-A simple and effective AI-powered tool for removing backgrounds from images with a beautiful Web UI and REST API.
+A simple and effective API-powered tool for removing backgrounds from images with a beautiful Web UI and REST API.
 
 ## ✨ Features
 
-- 🚀 **Fast & Accurate** - AI-powered background removal using U2-Net model
+- 🚀 **Fast & Accurate** - Powered by Clipdrop API for professional-quality background removal
 - 🎨 **Beautiful Web UI** - Modern, responsive interface with drag-and-drop support
 - 🔌 **REST API** - Easy integration into your applications
-- 🐳 **Docker Support** - Containerized for easy deployment
-- 🆓 **Free & Open Source** - No registration or API keys required
+- ☁️ **Serverless Ready** - Optimized for Vercel deployment
+- 🔑 **API Key Based** - No heavy models to download, uses cloud-based processing
 
 ## 🖼️ How It Works
 
 1. Upload your image (PNG, JPG, JPEG)
-2. AI automatically removes the background
+2. API automatically removes the background using Clipdrop
 3. Download your image with transparent background
 
+## 🔑 Setup
+
+### Prerequisites
+
+1. Get a Clipdrop API key from [https://clipdrop.co/apis](https://clipdrop.co/apis)
+2. Copy `.env.example` to `.env`
+3. Add your API key to `.env`:
+   ```
+   CLIPDROP_API_KEY=your_actual_api_key_here
+   ```
+
 ## 🚀 Quick Start
-
-### Using Docker (Recommended)
-
-```bash
-# Build and run with Docker Compose
-docker-compose up -d
-
-# Or build and run manually
-docker build -t background-remover .
-docker run -p 8000:8000 background-remover
-```
 
 ### Local Development
 
 ```bash
+# Clone the repository
+git clone https://github.com/YOUR-USERNAME/background-remover.git
+cd background-remover
+
 # Install dependencies
 pip install -r requirements.txt
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env and add your CLIPDROP_API_KEY
 
 # Run the application
 python main.py
 ```
 
 The application will be available at `http://localhost:8000`
+
+### Using Docker
+
+```bash
+# Build the Docker image
+docker build -t background-remover .
+
+# Run the container with your API key
+docker run -p 8000:8000 -e CLIPDROP_API_KEY=your_api_key background-remover
+```
 
 ## 📚 API Documentation
 
@@ -104,6 +122,19 @@ Visit `/docs` for interactive API documentation (Swagger UI).
 
 ## 🌐 Deployment
 
+### Deploy to Vercel (Recommended)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone)
+
+1. Click the "Deploy with Vercel" button above or go to [Vercel](https://vercel.com)
+2. Import this repository
+3. Add environment variable:
+   - `CLIPDROP_API_KEY`: Your Clipdrop API key
+4. Click "Deploy"
+5. Your app will be live at `https://your-app.vercel.app`
+
+**Important:** Remember to add your `CLIPDROP_API_KEY` in Vercel's environment variables section (Project Settings → Environment Variables).
+
 ### Deploy to Render
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com)
@@ -120,7 +151,8 @@ Visit `/docs` for interactive API documentation (Swagger UI).
 
 1. Click the button above
 2. Select this repository
-3. Railway will automatically deploy using the Dockerfile
+3. Add environment variable `CLIPDROP_API_KEY`
+4. Railway will automatically deploy the application
 
 ### Deploy to any Docker host
 
@@ -128,22 +160,29 @@ Visit `/docs` for interactive API documentation (Swagger UI).
 # Build the image
 docker build -t background-remover .
 
-# Run on any port
-docker run -p 8080:8000 -e PORT=8000 background-remover
+# Run with your API key
+docker run -p 8080:8000 -e PORT=8000 -e CLIPDROP_API_KEY=your_api_key background-remover
 ```
 
 ## 🛠️ Technology Stack
 
 - **Backend:** FastAPI (Python)
-- **AI Model:** U2-Net via rembg library
+- **Image Processing:** Clipdrop API (by Stability AI)
 - **Frontend:** HTML5, CSS3, JavaScript (Vanilla)
-- **Container:** Docker
+- **Deployment:** Vercel (Serverless)
 
 ## 📋 Requirements
 
 - Python 3.9+
-- 2GB RAM minimum (4GB recommended)
-- Docker (for containerized deployment)
+- Clipdrop API key (free tier available)
+- Internet connection for API calls
+
+## 🔑 API Key
+
+Get your free Clipdrop API key at [https://clipdrop.co/apis](https://clipdrop.co/apis)
+
+- Free tier: 100 API calls/month
+- Pro plans available for higher usage
 
 ## 🤝 Contributing
 
@@ -155,8 +194,8 @@ This project is open source and available under the MIT License.
 
 ## 🙏 Acknowledgments
 
-- [rembg](https://github.com/danielgatis/rembg) - Background removal library
-- [U2-Net](https://github.com/xuebinqin/U-2-Net) - Deep learning model for salient object detection
+- [Clipdrop](https://clipdrop.co/) - Background removal API by Stability AI
+- [FastAPI](https://fastapi.tiangolo.com/) - Modern web framework for building APIs
 
 ## 💬 Support
 

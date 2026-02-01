@@ -4,14 +4,13 @@ This guide provides step-by-step instructions for deploying the Background Remov
 
 ## Prerequisites
 
-- Docker and Docker Compose (for containerized deployment)
+- Clipdrop API key (get it from https://clipdrop.co/apis)
 - Python 3.9+ (for local deployment)
-- 2GB RAM minimum (4GB recommended)
-- Internet connection for downloading AI models
+- Internet connection for API calls
 
 ## Local Deployment
 
-### Using Docker Compose (Recommended)
+### Using Python Directly (Recommended)
 
 1. Clone the repository:
 ```bash
@@ -19,17 +18,23 @@ git clone https://github.com/YOUR-USERNAME/background-remover.git
 cd background-remover
 ```
 
-2. Build and start the container:
+2. Install dependencies:
 ```bash
-docker-compose up -d
+pip install -r requirements.txt
 ```
 
-3. Access the application at `http://localhost:8000`
-
-4. To stop the application:
+3. Set up environment variables:
 ```bash
-docker-compose down
+cp .env.example .env
+# Edit .env and add your CLIPDROP_API_KEY
 ```
+
+4. Run the application:
+```bash
+python main.py
+```
+
+5. Access the application at `http://localhost:8000`
 
 ### Using Docker
 
@@ -38,28 +43,53 @@ docker-compose down
 docker build -t background-remover .
 ```
 
-2. Run the container:
+2. Run the container with your API key:
 ```bash
-docker run -d -p 8000:8000 --name bg-remover background-remover
-```
-
-3. Access the application at `http://localhost:8000`
-
-### Using Python Directly
-
-1. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-2. Run the application:
-```bash
-python main.py
+docker run -d -p 8000:8000 -e CLIPDROP_API_KEY=your_api_key --name bg-remover background-remover
 ```
 
 3. Access the application at `http://localhost:8000`
 
 ## Cloud Deployment
+
+### Deploy to Vercel (Recommended)
+
+Vercel provides the fastest and easiest serverless deployment for this application.
+
+1. **Prerequisites:**
+   - GitHub account
+   - Vercel account (free) at [vercel.com](https://vercel.com)
+   - Clipdrop API key from [clipdrop.co/apis](https://clipdrop.co/apis)
+
+2. **Fork and import:**
+   - Fork this repository to your GitHub account
+   - Go to [Vercel Dashboard](https://vercel.com/dashboard)
+   - Click "Add New..." → "Project"
+   - Import your forked repository
+
+3. **Configure environment variables:**
+   - In the import screen, expand "Environment Variables"
+   - Add: `CLIPDROP_API_KEY` = `your_actual_api_key`
+   - Make sure to add it for Production, Preview, and Development environments
+
+4. **Deploy:**
+   - Click "Deploy"
+   - Wait for the build to complete (usually 1-2 minutes)
+   - Your app will be live at `https://your-project.vercel.app`
+
+5. **Update environment variables later (if needed):**
+   - Go to your project in Vercel Dashboard
+   - Settings → Environment Variables
+   - Add/Edit `CLIPDROP_API_KEY`
+   - Redeploy from Deployments tab
+
+**Vercel Deployment Features:**
+- ✅ Automatic HTTPS
+- ✅ Global CDN
+- ✅ Automatic deployments on git push
+- ✅ Zero downtime deployments
+- ✅ Serverless functions (no servers to manage)
+- ✅ Free tier available
 
 ### Deploy to Render
 
@@ -78,9 +108,13 @@ python main.py
    - **Branch**: main
    - **Plan**: Free (or higher for production)
 
-6. Click "Create Web Service"
+6. Add environment variable:
+   - Key: `CLIPDROP_API_KEY`
+   - Value: Your Clipdrop API key
 
-7. Render will automatically:
+7. Click "Create Web Service"
+
+8. Render will automatically:
    - Detect the `render.yaml` configuration
    - Build the Docker image
    - Deploy the application
@@ -96,13 +130,14 @@ python main.py
 
 4. Choose this repository
 
-5. Railway will automatically:
+5. Add environment variable:
+   - Key: `CLIPDROP_API_KEY`
+   - Value: Your Clipdrop API key
+
+6. Railway will automatically:
    - Detect the Dockerfile
    - Build and deploy the application
    - Provide a URL
-
-6. Configure environment variables if needed:
-   - `PORT`: 8000 (default)
 
 ### Deploy to Heroku
 
@@ -175,13 +210,31 @@ eb open
 
 ## Environment Variables
 
-You can customize the application using these environment variables:
+The application requires the following environment variable:
 
-- `PORT`: Port number for the application (default: 8000)
+- `CLIPDROP_API_KEY`: Your Clipdrop API key (required)
+- `PORT`: Port number for the application (default: 8000, optional)
 
-Example with Docker:
+### Setting Environment Variables
+
+**Vercel:**
+- Project Settings → Environment Variables → Add `CLIPDROP_API_KEY`
+
+**Render:**
+- Environment tab → Add `CLIPDROP_API_KEY`
+
+**Railway:**
+- Variables tab → Add `CLIPDROP_API_KEY`
+
+**Docker:**
 ```bash
-docker run -d -p 80:80 -e PORT=80 background-remover
+docker run -d -p 80:80 -e PORT=80 -e CLIPDROP_API_KEY=your_key background-remover
+```
+
+**Local Development:**
+```bash
+cp .env.example .env
+# Edit .env and add your CLIPDROP_API_KEY
 ```
 
 ## Health Check
@@ -196,36 +249,37 @@ All deployments should configure health checks:
 
 For production deployments:
 
-1. **Memory**: Allocate at least 2GB RAM, 4GB recommended
-2. **CPU**: AI model processing is CPU-intensive
-3. **Storage**: Models are downloaded on first run (~200MB)
-4. **Timeout**: Set request timeout to at least 30 seconds for large images
+1. **Memory**: Minimal memory required (serverless functions use ~128MB)
+2. **Timeout**: Set request timeout to at least 30 seconds for large images
+3. **API Limits**: Monitor your Clipdrop API usage and upgrade plan if needed
+4. **Rate Limiting**: Consider implementing rate limiting for public endpoints
 
 ## Monitoring
 
 Monitor these metrics:
 
 - Response time for `/api/remove-background`
-- Memory usage (should be stable around 500MB-1GB)
-- Error rate
+- API call success/error rate
+- Clipdrop API usage and quota
 - Health check status
 
 ## Troubleshooting
 
 ### Application won't start
-- Check that port 8000 is available
-- Ensure sufficient memory (minimum 2GB)
-- Verify all dependencies are installed
+- Check that `CLIPDROP_API_KEY` is set correctly
+- Verify API key is valid at clipdrop.co
+- Check application logs for error messages
 
-### Background removal is slow
-- First request downloads the AI model (~200MB)
-- Subsequent requests should be faster
-- Consider using a larger instance size
+### Background removal fails
+- Verify API key is valid
+- Check API quota hasn't been exceeded
+- Ensure image format is supported (PNG, JPG, JPEG)
+- Check image size (some APIs have limits)
 
-### Out of memory errors
-- Increase memory allocation to 4GB
-- Limit concurrent requests
-- Implement request queuing
+### API rate limiting
+- Check your Clipdrop plan limits
+- Implement client-side rate limiting
+- Consider upgrading your Clipdrop plan
 
 ## Security
 
