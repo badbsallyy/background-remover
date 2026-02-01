@@ -267,7 +267,7 @@ Vercel serverless functions may have "cold starts" (first request takes longer):
 ### Image Size Limits
 
 - **Hobby plan:** 4.5 MB request body limit
-- **Pro plan:** 5 MB request body limit
+- **Pro plan:** 4.5 MB request body limit
 - **Recommendation:** Compress images before upload for better performance
 
 ## Cost
