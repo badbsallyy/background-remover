@@ -40,12 +40,17 @@ app.add_middleware(
 async def read_root():
     """Serve the web UI"""
     try:
-        # Try to read from static directory
+        # Try to read from public directory (Vercel standard)
+        public_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "public", "index.html")
+        if os.path.exists(public_path):
+            with open(public_path, "r") as f:
+                return f.read()
+        # Try to read from static directory (local fallback)
         static_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static", "index.html")
         if os.path.exists(static_path):
             with open(static_path, "r") as f:
                 return f.read()
-        # Fallback for Vercel deployment
+        # Final fallback
         return """
         <html>
             <body>
