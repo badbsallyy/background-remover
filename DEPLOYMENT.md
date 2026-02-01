@@ -56,6 +56,8 @@ docker run -d -p 8000:8000 -e POLLINATION_API_KEY=your_api_key --name bg-remover
 
 Vercel provides the fastest and easiest serverless deployment for this application.
 
+#### Method 1: Deploy via Vercel Dashboard (Recommended)
+
 1. **Prerequisites:**
    - GitHub account
    - Vercel account (free) at [vercel.com](https://vercel.com)
@@ -83,6 +85,44 @@ Vercel provides the fastest and easiest serverless deployment for this applicati
    - Add/Edit `POLLINATION_API_KEY`
    - Redeploy from Deployments tab
 
+#### Method 2: Deploy via Vercel CLI
+
+1. **Install Vercel CLI:**
+   ```bash
+   npm install -g vercel
+   ```
+
+2. **Login to Vercel:**
+   ```bash
+   vercel login
+   ```
+
+3. **Deploy:**
+   ```bash
+   cd background-remover
+   vercel
+   ```
+
+4. **Follow the prompts:**
+   - Link to existing project or create new one
+   - Set up project settings
+   - Add environment variable when prompted:
+     - `POLLINATION_API_KEY`: Your API key
+
+5. **For production deployment:**
+   ```bash
+   vercel --prod
+   ```
+
+#### Method 3: One-Click Deploy
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/badbsallyy/background-remover&env=POLLINATION_API_KEY&envDescription=Pollinations%20AI%20API%20key%20for%20background%20removal&envLink=https://enter.pollinations.ai)
+
+1. Click the button above
+2. Enter your Pollinations AI API key when prompted
+3. Click "Deploy"
+4. Your app will be live in minutes!
+
 **Vercel Deployment Features:**
 - ✅ Automatic HTTPS
 - ✅ Global CDN
@@ -90,6 +130,13 @@ Vercel provides the fastest and easiest serverless deployment for this applicati
 - ✅ Zero downtime deployments
 - ✅ Serverless functions (no servers to manage)
 - ✅ Free tier available
+
+**Important Notes:**
+- The application uses Vercel's serverless function architecture
+- Static files are served from the `public` directory
+- API endpoints are automatically routed through `/api/`
+- Environment variables are configured in Vercel Dashboard
+- Automatic deployments trigger on every push to main branch
 
 ### Deploy to Render
 

@@ -124,14 +124,22 @@ Visit `/docs` for interactive API documentation (Swagger UI).
 
 ### Deploy to Vercel (Recommended)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/badbsallyy/background-remover&env=POLLINATION_API_KEY&envDescription=Pollinations%20AI%20API%20key%20for%20background%20removal&envLink=https://enter.pollinations.ai)
 
-1. Click the "Deploy with Vercel" button above or go to [Vercel](https://vercel.com)
-2. Import this repository
-3. Add environment variable:
-   - `POLLINATION_API_KEY`: Your Pollinations AI API key
+**Quick Deploy:**
+1. Click the "Deploy with Vercel" button above
+2. Sign in to Vercel (free account)
+3. Add your `POLLINATION_API_KEY` environment variable
 4. Click "Deploy"
-5. Your app will be live at `https://your-app.vercel.app`
+5. Your app will be live in 1-2 minutes! 🎉
+
+**Detailed Instructions:**
+See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for comprehensive deployment guide including:
+- One-click deployment
+- GitHub integration
+- CLI deployment
+- Troubleshooting
+- Custom domains
 
 **Important:** Remember to add your `POLLINATION_API_KEY` in Vercel's environment variables section (Project Settings → Environment Variables).
 
