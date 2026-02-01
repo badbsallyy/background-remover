@@ -140,9 +140,11 @@ async def remove_background(file: UploadFile = File(...)):
             detail="Request timeout. The image might be too large or the service is slow."
         )
     except httpx.RequestError as e:
+        # Log the error for debugging
+        print(f"Failed to connect to Clipdrop API: {str(e)}")
         raise HTTPException(
             status_code=503,
-            detail=f"Failed to connect to Clipdrop API: {str(e)}"
+            detail="Failed to connect to the image processing service. Please try again later."
         )
     except Exception as e:
         # Log the error for debugging
