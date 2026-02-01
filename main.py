@@ -18,6 +18,9 @@ POLLINATION_API_KEY = os.getenv("POLLINATION_API_KEY")
 if not POLLINATION_API_KEY:
     print("WARNING: POLLINATION_API_KEY not set. Background removal will fail.")
 
+# Background removal prompt for Pollinations AI
+BACKGROUND_REMOVAL_PROMPT = "remove background, isolated subject, transparent background, cutout"
+
 app = FastAPI(
     title="Background Remover API",
     description="A simple and effective API for removing backgrounds from images using Pollinations AI",
@@ -72,6 +75,9 @@ async def remove_background(file: UploadFile = File(...)):
         
     Returns:
         PNG image with transparent background
+        
+    Note:
+        Processing may take up to 60 seconds for AI-based background removal
     """
     # Check if API key is configured
     if not POLLINATION_API_KEY:
@@ -100,14 +106,10 @@ async def remove_background(file: UploadFile = File(...)):
         # Use the /image endpoint with kontext model and data URI
         async with httpx.AsyncClient(timeout=60.0) as client:
             # Construct the API URL with prompt and parameters
-            prompt = "remove background, isolated subject, transparent background, cutout"
-            # URL encode the data URI
-            encoded_image = urllib.parse.quote(data_uri)
-            
-            api_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote(prompt)}"
+            api_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote(BACKGROUND_REMOVAL_PROMPT)}"
             params = {
                 "model": "kontext",
-                "image": data_uri,  # Pass data URI as parameter instead of in URL
+                "image": data_uri,  # Pass data URI as parameter
                 "nologo": "true"
             }
             
