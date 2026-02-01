@@ -1,0 +1,10 @@
+# Render.com deployment configuration
+services:
+  - type: web
+    name: background-remover
+    env: docker
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 8000
